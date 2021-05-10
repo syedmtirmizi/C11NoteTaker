@@ -1,12 +1,11 @@
 # C11NoteTaker
 
-This github is to showcase my abilities to use Node.js.
+This github is to showcase my abilities to use Express.js.
 
-The project is designed to be a professional README geneartor.
+The project is designed to be a professional Note Taker app.
 
-The index.js file can be found [here](./Develop/index.js)
+The server.js file can be found [here](server.js)
 
-Click [here](https://drive.google.com/file/d/1wXKij5OcDxgyXLDsiJs3fLoWlO3IIIDQ/view) for a video demo of how the applicaiton works.
+Click [here](http://localhost:3001/) for a link to the live application.
 
-
-The following is a screenshot of an example readme create: ![here](https://github.com/syedmtirmizi/C9NodeJS.github.io/blob/main/Develop/assets/images/screencapture-github-syedmtirmizi-C9NodeJS-github-io-blob-main-Develop-test1-md-2021-04-18-17_27_17.png?raw=true)
+The following is a screenshot of an example readme create: ![here](public\assets\images\Screenshot.JPG)
