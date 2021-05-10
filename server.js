@@ -7,7 +7,7 @@ const fs = require('fs');
 
 // Sets up the Express app to handle data parsing
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -17,91 +17,43 @@ app.use(express.static("public"));
 // =============================================================
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
+    res.sendFile(path.join(__dirname, '/public/index.html'));
 });
 
 app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/notes.html'));
+    res.sendFile(path.join(__dirname, '/public/notes.html'));
+});
+
+app.get('/api/notes', (req,res) => {
+    res.sendFile(path.join(__dirname, '/db/db.json'));
 });
 
 app.post('/api/notes', (req,res) => {
-    fs.readFile(__dirname + "/db/db.json", 'utf8', (error, notes) => {
-        if (error) {
-            return console.log(error)
-        }
-        notes = JSON.parse(notes)
+    let newNote = req.body;
+    let listNote = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
+    let lengthNote = (listNote.length).toString();
 
-        var id = notes[notes.length -1].id + 1
-        var newNote = {
-            title:req.body.title, 
-            text:req.body.text,
-            id: id
-        }
-        var activeNote = notes.concat(newNote)
+    newNote.id = lengthNote;
 
-        fs.writeFile(__dirname + "/db/db.json", JSON.stringify(activeNote), (error,data) => {
-            if (error) {
-                return error
-            }
-            console.log(activeNote)
-            res.json(activeNote);
-        })
+    listNote.push(newNote);
 
-    })
+    fs.writeFileSync("./db/db.json", JSON.stringify(listNote));
+    res.json(listNote);
 })
 
-//Get notes from db.json
-app.get('/api/notes', (req,res) => {
-    fs.readFile(__dirname + "/db/db.json", "utf8", (error,data) => {
-        if (error) {
-            return console.log(error)
-        }
-        console.log("Your note", data)
-        res.json(JSON.parse(data))
+app.delete("/api/notes/:id", (req,res) => {
+    let listNote = JSON.parse(fs.readFileSync('./db/db.json', 'utf8'));
+    let noteId = (req.params.id).toString();
+
+    listNote = listNote.filter(selected => {
+        return selected.id !== noteId;
     })
+
+    fs.writeFileSync('./db/db.json', JSON.stringify(listNote));
+    res.json(listNote);
 });
 
-app.delete("/api/notes:id", (req,res) => {
-    const noteId = JSON.parse(req.params.id)
-    console.log(noteId)
-    
-    fs.readFile(__dirname + "/db/db.json", 'utf8', (error,notes) => {
-        if (error) {
-            return console.log(error)
-        }
-        notes = JSON.parse(notes)
 
-        notes = note.filter(val => val.id !== noteId)
-
-        fs.writeFile(__dirname + '/db/db.json', JSON.stringify(notes), (error,data) => {
-            if (error) {
-                return error
-            }
-            res.json(notes)
-        })
-    })
-})
-
-app.put("/api/notes/:id", (req, res) => {
-    const noteId = JSON.parse(res.params.id)
-    console.log(noteId)
-
-    fs.readFile(__dirname + "/db/db.json", 'utf8', (error,notes) => {
-        if (error) {
-            return console.log(error)
-        }
-        notes.JSONparse(notes)
-
-        notes = notes.filter(val => val.id !== noteId)
-
-        fs.writeFile(__dirname + "/db/db.json", JSON.stringify(notes), (error,data) => {
-            if (error) {
-                return error
-            }
-            res.json(notes)
-        })
-    })
-})
 
 // Listener
 // =============================================================
